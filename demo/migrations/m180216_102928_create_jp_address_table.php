@@ -14,13 +14,13 @@ class m180216_102928_create_jp_address_table extends Migration
     {
         $this->createTable('jp_address', [
             'id' => $this->primaryKey(),
-            'address_cd' => $this->string(),
-            'prefecture_cd' => $this->string(),
-            'city_ward_town_village_cd' => $this->string(),
-            'town_area_cd' => $this->string(),
+            'address_cd' => $this->integer(),
+            'prefecture_cd' => $this->integer(),
+            'city_ward_town_village_cd' => $this->integer(),
+            'town_area_cd' => $this->integer(),
             'zipcode' => $this->string(),
-            'office_flag' => $this->string(),
-            'abolition_flag' => $this->string(),
+            'office_flag' => $this->smallInteger(),
+            'abolition_flag' => $this->smallInteger(),
             'prefecture' => $this->string(),
             'prefecture_kana' => $this->string(),
             'city_ward_town_village' => $this->string(),
@@ -35,7 +35,7 @@ class m180216_102928_create_jp_address_table extends Migration
             'office_name' => $this->string(),
             'office_name_kana' => $this->string(),
             'office_address' => $this->string(),
-            'new_address_cd' => $this->string(),
+            'new_address_cd' => $this->integer(),
         ]);
         $this->createIndex('jp_address-address_cd-idx', 'jp_address', 'address_cd');
     }

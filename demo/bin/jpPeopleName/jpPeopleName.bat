@@ -1,0 +1,1 @@
+../../yii load-jp-people-name-csv --csvFile=./jpPeopleName.utf8.csv

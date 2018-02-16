@@ -26,4 +26,21 @@ class GenerateDataController extends Controller
             'office_flag' => "1",
         ]);
     }
+
+    /**
+     * Syntax
+     *   ./yii generate-data/people-name
+     */
+    public function actionPeopleName()
+    {
+        JpAddress::generateData(Company::className(), [
+            'zipcode' => 'postal_code',
+            'prefecture',
+            'city_ward_town_village' => 'city',
+            'townAreaAndFollow' => 'town',
+            'office_name' => 'name',
+        ], [
+            'office_flag' => "1",
+        ]);
+    }
 }

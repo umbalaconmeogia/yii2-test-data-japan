@@ -1,0 +1,1 @@
+../yii generate-data/address

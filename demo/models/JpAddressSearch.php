@@ -2,10 +2,9 @@
 
 namespace app\models;
 
-use Yii;
+use app\models\JpAddress;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\JpAddress;
 
 /**
  * JpAddressSearch represents the model behind the search form of `app\models\JpAddress`.
@@ -18,8 +17,8 @@ class JpAddressSearch extends JpAddress
     public function rules()
     {
         return [
-            [['id'], 'integer'],
-            [['address_cd', 'prefecture_cd', 'city_ward_town_village_cd', 'town_area_cd', 'zipcode', 'office_flag', 'abolition_flag', 'prefecture', 'prefecture_kana', 'city_ward_town_village', 'city_ward_town_village_kana', 'town_area', 'town_area_kana', 'town_area_complement', 'kyoto_street_name', 'aza_cho_me', 'aza_cho_me_kana', 'remarks', 'office_name', 'office_name_kana', 'office_address', 'new_address_cd'], 'safe'],
+            [['id', 'address_cd', 'prefecture_cd', 'city_ward_town_village_cd', 'town_area_cd', 'office_flag', 'abolition_flag', 'new_address_cd'], 'integer'],
+            [['zipcode', 'prefecture', 'prefecture_kana', 'city_ward_town_village', 'city_ward_town_village_kana', 'town_area', 'town_area_kana', 'town_area_complement', 'kyoto_street_name', 'aza_cho_me', 'aza_cho_me_kana', 'remarks', 'office_name', 'office_name_kana', 'office_address'], 'safe'],
         ];
     }
 
@@ -60,15 +59,16 @@ class JpAddressSearch extends JpAddress
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
+            'address_cd' => $this->address_cd,
+            'prefecture_cd' => $this->prefecture_cd,
+            'city_ward_town_village_cd' => $this->city_ward_town_village_cd,
+            'town_area_cd' => $this->town_area_cd,
+            'office_flag' => $this->office_flag,
+            'abolition_flag' => $this->abolition_flag,
+            'new_address_cd' => $this->new_address_cd,
         ]);
 
-        $query->andFilterWhere(['like', 'address_cd', $this->address_cd])
-            ->andFilterWhere(['like', 'prefecture_cd', $this->prefecture_cd])
-            ->andFilterWhere(['like', 'city_ward_town_village_cd', $this->city_ward_town_village_cd])
-            ->andFilterWhere(['like', 'town_area_cd', $this->town_area_cd])
-            ->andFilterWhere(['like', 'zipcode', $this->zipcode])
-            ->andFilterWhere(['like', 'office_flag', $this->office_flag])
-            ->andFilterWhere(['like', 'abolition_flag', $this->abolition_flag])
+        $query->andFilterWhere(['like', 'zipcode', $this->zipcode])
             ->andFilterWhere(['like', 'prefecture', $this->prefecture])
             ->andFilterWhere(['like', 'prefecture_kana', $this->prefecture_kana])
             ->andFilterWhere(['like', 'city_ward_town_village', $this->city_ward_town_village])
@@ -82,8 +82,7 @@ class JpAddressSearch extends JpAddress
             ->andFilterWhere(['like', 'remarks', $this->remarks])
             ->andFilterWhere(['like', 'office_name', $this->office_name])
             ->andFilterWhere(['like', 'office_name_kana', $this->office_name_kana])
-            ->andFilterWhere(['like', 'office_address', $this->office_address])
-            ->andFilterWhere(['like', 'new_address_cd', $this->new_address_cd]);
+            ->andFilterWhere(['like', 'office_address', $this->office_address]);
 
         return $dataProvider;
     }

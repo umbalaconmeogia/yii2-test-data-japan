@@ -14,7 +14,7 @@ class BaseJpGenerateData extends BaseModel
      */
     protected static function getAllIds($searchCondition = [])
     {
-        $sourceRecords = static::find()->select(['id'])->where($searchCondition)->limit(10)->all();
+        $sourceRecords = static::find()->select(['id'])->where($searchCondition)->limit(100)->all();
         $sourceIds = static::getArrayOfFieldValue($sourceRecords);
         $sourceRecords = NULL; // Does this help free memory?
         return $sourceIds;

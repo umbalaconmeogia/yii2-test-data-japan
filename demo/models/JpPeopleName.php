@@ -55,7 +55,7 @@ class JpPeopleName extends BaseJpGenerateData
         ];
     }
 
-    public static function generateNameData($className, $sourceField = 'kanji', $destField = 'name')
+    public static function generateNameData($className, $destKanjiField = 'name', $destKanaField = 'name_kana')
     {
         $lastNameIds = static::getAllIds(['type' => static::TYPE_LASTNAME]);
         $firstNameIds = static::getAllIds(['type' => static::TYPE_FIRSTNAME]);
@@ -68,7 +68,10 @@ class JpPeopleName extends BaseJpGenerateData
             // Gen random lastname and firstname.
             $lastName = self::getRandomRecord($lastNameIds);
             $firstName = self::getRandomRecord($firstNameIds);
-            $targetModel->$destField = "{$lastName->$sourceField} {$firstName->$sourceField}";
+            $targetModel->$destKanjiField = "{$lastName->kanji}　{$firstName->kanji}";
+            if ($destKanaField) {
+                $targetModel->$destKanaField = "{$lastName->kana}　{$firstName->kana}";
+            }
             $targetModel->save();
         }
     }

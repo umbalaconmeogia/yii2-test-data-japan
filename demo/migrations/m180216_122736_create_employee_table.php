@@ -16,6 +16,7 @@ class m180216_122736_create_employee_table extends Migration
             'id' => $this->primaryKey(),
             'company_id' => 'INTEGER REFERENCES company(id)',
             'name' => $this->string(),
+            'name_kana' => $this->string(),
             'postal_code' => $this->string(),
             'address' => $this->string(),
             'tel' => $this->string(),

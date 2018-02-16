@@ -2,6 +2,9 @@
 
 This library help to generate test data such as zip code, address, office name, people name.
 
+## TODO
+Put JpData into separate DB
+
 ## References
 
 住所データ

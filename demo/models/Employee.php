@@ -11,6 +11,7 @@ use Yii;
  * @property int $id
  * @property int $company_id
  * @property string $name
+ * @property string $name_kana
  * @property string $postal_code
  * @property string $address
  * @property string $tel
@@ -35,7 +36,7 @@ class Employee extends BaseModel
     {
         return [
             [['company_id'], 'integer'],
-            [['name', 'postal_code', 'address', 'tel', 'fax'], 'string', 'max' => 255],
+            [['name', 'name_kana', 'postal_code', 'address', 'tel', 'fax'], 'string', 'max' => 255],
             [['company_id'], 'exist', 'skipOnError' => true, 'targetClass' => Company::className(), 'targetAttribute' => ['company_id' => 'id']],
         ];
     }
@@ -49,6 +50,7 @@ class Employee extends BaseModel
             'id' => 'ID',
             'company_id' => 'Company ID',
             'name' => 'Name',
+            'name_kana' => 'Name Kana',
             'postal_code' => 'Postal Code',
             'address' => 'Address',
             'tel' => 'Tel',

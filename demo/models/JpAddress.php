@@ -2,8 +2,8 @@
 
 namespace app\models;
 
-use Yii;
 use batsg\models\BaseModel;
+use batsg\helpers\HArray;
 
 /**
  * This is the model class for table "jp_address".
@@ -31,6 +31,9 @@ use batsg\models\BaseModel;
  * @property string $office_name_kana
  * @property string $office_address
  * @property string $new_address_cd
+ *
+ * @property string $townAreaAndFollow
+ * @property string $townAreaAndFollowKana
  */
 class JpAddress extends BaseModel
 {
@@ -81,6 +84,65 @@ class JpAddress extends BaseModel
             'office_name_kana' => '事業所名カナ',
             'office_address' => '事業所住所',
             'new_address_cd' => '新住所CD',
+        ];
+    }
+
+    /**
+     * @return string
+     */
+    public function getTownAreaAndFollow()
+    {
+        $fields = [];
+        if ($this->office_address) {
+            $fields[] = 'office_address';
+        } else {
+            $fields[] = 'town_area';
+            $fields[] = 'aza_cho_me';
+        }
+        return $this->joinFieldValues($fields);
+    }
+
+    /**
+     * @return string
+     */
+    public function getTownAreaAndFollowKana()
+    {
+        $fields = [];
+        $fields[] = 'town_area';
+        $fields[] = 'aza_cho_me';
+        return $this->joinFieldValues($fields);
+    }
+
+    /**
+     * Get address by combinating all address elements.
+     * @return string
+     */
+    public function getAddress()
+    {
+        $fields = [
+            'prefecture',
+            'city_ward_town_village',
+            'townAreaAndFollow',
+        ];
+        return $this->joinFieldValues($fields);
+    }
+
+    public function getAddressKana()
+    {
+        $result = [];
+        $fields = [
+            'prefecture_kana',
+            'city_ward_town_village_kana',
+            'townAreaAndFollowKana',
+        ];
+        return $this->joinFieldValues($fields);
+    }
+
+    public static function officeFlagOptionArr()
+    {
+        return [
+            0 => '事務所ではない',
+            1 => '事務所である',
         ];
     }
 }

@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use app\models\JpPeopleName;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\JpPeopleNameSearch */
@@ -25,7 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'kana',
             [
                 'attribute' => 'type',
-                'filter' =>
+                'filter' => JpPeopleName::typeOptionArr(),
             ],
         ],
     ]); ?>

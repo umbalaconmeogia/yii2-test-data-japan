@@ -3,31 +3,47 @@
 namespace app\models;
 
 use batsg\models\BaseModel;
-use Yii;
 use yii\db\ActiveRecord;
 
 class BaseJpGenerateData extends BaseModel
 {
+    /**
+     * Get IDs of ActiveRecord that match $searchCondition.
+     * @param array $searchCondition Condition used in where().
+     * @return int[]
+     */
+    protected static function getAllIds($searchCondition = [])
+    {
+        $sourceRecords = static::find()->select(['id'])->where($searchCondition)->limit(10)->all();
+        $sourceIds = static::getArrayOfFieldValue($sourceRecords);
+        $sourceRecords = NULL; // Does this help free memory?
+        return $sourceIds;
+    }
+
+    /**
+     * Get a random ActiveRecord that ID is in an ID list.
+     * @param int[] $ids
+     * @return ActiveRecord
+     */
+    protected static function getRandomRecord(&$ids)
+    {
+        return static::findOne(['id' => $ids[mt_rand(0, count($ids) - 1)]]);
+    }
 
     public static function generateData($className, $attrMap, $sourceCondition = [])
     {
-        // Get all JpAddress ids.
-        $sourceRecords = static::find()->select(['id'])->where($sourceCondition)->limit(100)->all();
-        $sourceIds = static::getArrayOfFieldValue($sourceRecords);
-        $sourceRecords = NULL; // Does this help free memory?
+        $sourceIds = self::getAllIds($sourceCondition);
 
         // Get all objects to be changed.
         $targetObjects = $className::find()->all();
 
         // Update objects data.
-//         \Yii::$app->db->transaction(function() use ($targetObjects, $sourceIds, $attrMap) {
-            foreach ($targetObjects as $targetModel) {
-                // Gen a random Source.
-                $sourceRecord = static::findOne(['id' => $sourceIds[mt_rand(0, count($sourceIds) - 1)]]);
-                // Change specified field value.
-                $sourceRecord->changeData($targetModel, $attrMap);
-            }
-//         });
+        foreach ($targetObjects as $targetModel) {
+            // Gen a random Source.
+            $sourceRecord = static::getRandomRecord($sourceIds);
+            // Change specified field value.
+            $sourceRecord->changeData($targetModel, $attrMap);
+        }
     }
 
     /**

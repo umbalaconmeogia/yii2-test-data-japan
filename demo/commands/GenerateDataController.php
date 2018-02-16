@@ -4,6 +4,8 @@ namespace app\commands;
 use yii\console\Controller;
 use app\models\JpAddress;
 use app\models\Company;
+use app\models\Employee;
+use app\models\JpPeopleName;
 
 /**
  * Generate address and name data.
@@ -12,9 +14,9 @@ class GenerateDataController extends Controller
 {
     /**
      * Syntax
-     *   ./yii generate-data/address
+     *   ./yii generate-data/company
      */
-    public function actionAddress()
+    public function actionCompany()
     {
         JpAddress::generateData(Company::className(), [
             'zipcode' => 'postal_code',
@@ -29,18 +31,14 @@ class GenerateDataController extends Controller
 
     /**
      * Syntax
-     *   ./yii generate-data/people-name
+     *   ./yii generate-data/employee
      */
-    public function actionPeopleName()
+    public function actionEmployee()
     {
-        JpAddress::generateData(Company::className(), [
+        JpAddress::generateData(Employee::className(), [
             'zipcode' => 'postal_code',
-            'prefecture',
-            'city_ward_town_village' => 'city',
-            'townAreaAndFollow' => 'town',
-            'office_name' => 'name',
-        ], [
-            'office_flag' => "1",
+            'address',
         ]);
+        JpPeopleName::generateNameData(Employee::className());
     }
 }

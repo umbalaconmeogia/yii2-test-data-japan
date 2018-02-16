@@ -1,1 +1,2 @@
-../yii generate-data/address
+call ../yii generate-data/company
+call ../yii generate-data/employee

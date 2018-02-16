@@ -54,4 +54,22 @@ class JpPeopleName extends BaseJpGenerateData
             self::TYPE_FIRSTNAME => '名',
         ];
     }
+
+    public static function generateNameData($className, $sourceField = 'kanji', $destField = 'name')
+    {
+        $lastNameIds = static::getAllIds(['type' => static::TYPE_LASTNAME]);
+        $firstNameIds = static::getAllIds(['type' => static::TYPE_FIRSTNAME]);
+
+        // Get all objects to be changed.
+        $targetObjects = $className::find()->all();
+
+        // Update objects data.
+        foreach ($targetObjects as $targetModel) {
+            // Gen random lastname and firstname.
+            $lastName = self::getRandomRecord($lastNameIds);
+            $firstName = self::getRandomRecord($firstNameIds);
+            $targetModel->$destField = "{$lastName->$sourceField} {$firstName->$sourceField}";
+            $targetModel->save();
+        }
+    }
 }

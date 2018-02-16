@@ -1,0 +1,16 @@
+{
+    "name": "umbalaconmeogia/yii2-test-data-japan",
+	"type": "yii2-extension",
+	"description": "Library to generate test data in Japanese such as address, office and people name.",
+    "authors": [
+        {
+            "name": "Tran Trung Thanh",
+            "role": "Developer"
+        }
+    ],
+    "autoload": {
+        "psr-4": {"testDataJapan\\": "src/"}
+    },
+	"keywords": ["yii2", "utility"],
+	"license": "MIT"
+}

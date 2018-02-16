@@ -1,0 +1,1 @@
+../../yii jp-address --csvFile=./jpAddress.utf8.csv

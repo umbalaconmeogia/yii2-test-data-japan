@@ -3,7 +3,7 @@
 namespace app\models;
 
 use batsg\models\BaseModel;
-use batsg\helpers\HArray;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "jp_address".
@@ -32,8 +32,10 @@ use batsg\helpers\HArray;
  * @property string $office_address
  * @property string $new_address_cd
  *
- * @property string $townAreaAndFollow
+ * @property string $townAreaAndFollow Combination of 町域 and 字丁目
  * @property string $townAreaAndFollowKana
+ * @property string $address Combination of add address's elements into a string.
+ * @property string $addressKana
  */
 class JpAddress extends BaseModel
 {
@@ -144,5 +146,44 @@ class JpAddress extends BaseModel
             0 => '事務所ではない',
             1 => '事務所である',
         ];
+    }
+
+    public static function generateData($className, $attrMap, $jpAddressCondition = [])
+    {
+        // Get all JpAddress ids.
+        $jpAddresses = JpAddress::find()->select(['id'])->where($jpAddressCondition)->limit(100)->all();
+        $jpAddressIds = JpAddress::getArrayOfFieldValue($jpAddresses);
+        $jpAddresses = NULL;
+
+        // Get all objects to be changed.
+        $targetObjects = $className::find()->all();
+
+        // Update objects data.
+        \Yii::$app->db->transaction(function() use ($targetObjects, $jpAddressIds, $attrMap) {
+            foreach ($targetObjects as $targetModel) {
+                // Gen a random JpAddress.
+                $jpAddress = JpAddress::findOne(['id' => array_rand($jpAddressIds)]);
+                // Change specified field value.
+                $jpAddress->changeData($targetModel, $attrMap);
+            }
+        });
+    }
+
+    /**
+     * @param ActiveRecord $targetModel
+     * @param string[] $attrMap Array define pair of models' attribute.
+     *                    If both attributes are same, then it may be defined as string element,
+     *                    else it should be defined as $sourceField => $destField pair.
+     * @param boolean $save Save $targetModel or not.
+     */
+    public function changeData(ActiveRecord $targetModel, $attrMap, $save = TRUE)
+    {
+        foreach ($attrMap as $key => $destField) {
+            $sourceField = is_numeric($key) ? $destField : $key;
+            $targetModel->$destField = $this->$sourceField;
+        }
+        if ($save) {
+            $targetModel->save();
+        }
     }
 }

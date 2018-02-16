@@ -32,11 +32,6 @@ class LoadJpAddressCsvController extends BaseCsvLoadingController
             \Yii::$app->db->transaction(function() use ($csv) {
                 /** @var $csv CsvWithHeader */
                 $csv->skipRow(); // Ignore the second row (the title row).
-// $csv->loadRow();
-// $attr = $csv->getRowAsAttributes();
-// foreach ($attr as $attribute => $label) {
-//     echo "'$attribute' => '$label',\n";
-// }
 
                 while ($csv->loadRow() !== FALSE) {
                     $attr = $csv->getRowAsAttributes();

@@ -2,12 +2,12 @@
 
 This library help to generate test data such as zip code, address, office name, people name.
 
-## TODO
-Put JpData into separate DB
+If you have records in DB, this library helps you to set the zip code, address, people name... to an random value so that you have a rational test data.
 
 ## References
 
-住所データ
+* 住所データ
 http://jusyo.jp/index.html
-人名データ
+
+* 人名データ
 http://mobile.shinsv.mydns.jp/jinmei/?mode=download

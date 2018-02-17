@@ -1,7 +1,7 @@
 <?php
 
 $params = require __DIR__ . '/params.php';
-$db = require __DIR__ . '/db.php';
+$common = require __DIR__ . '/common.php';
 
 $config = [
     'id' => 'basic',
@@ -16,9 +16,7 @@ $config = [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'yii2-test-data-japan-KDF23489',
         ],
-        'cache' => [
-            'class' => 'yii\caching\FileCache',
-        ],
+        'cache' => $common['cache'],
         'user' => [
             'identityClass' => 'app\models\User',
             'enableAutoLogin' => true,
@@ -33,16 +31,9 @@ $config = [
             // for the mailer to send real emails.
             'useFileTransport' => true,
         ],
-        'log' => [
-            'traceLevel' => YII_DEBUG ? 3 : 0,
-            'targets' => [
-                [
-                    'class' => 'yii\log\FileTarget',
-                    'levels' => ['error', 'warning'],
-                ],
-            ],
-        ],
-        'db' => $db,
+        'log' => $common['log'],
+        'db' => $common['db'],
+        'dbTestDataJapan' => $common['dbTestDataJapan'],
         /*
         'urlManager' => [
             'enablePrettyUrl' => true,

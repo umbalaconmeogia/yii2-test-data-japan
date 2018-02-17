@@ -1,7 +1,7 @@
 <?php
 
 $params = require __DIR__ . '/params.php';
-$db = require __DIR__ . '/db.php';
+$common = require __DIR__ . '/common.php';
 
 $config = [
     'id' => 'basic-console',
@@ -9,27 +9,10 @@ $config = [
     'bootstrap' => ['log'],
     'controllerNamespace' => 'app\commands',
     'components' => [
-        'cache' => [
-            'class' => 'yii\caching\FileCache',
-        ],
-        'log' => [
-            'targets' => [
-                [
-                    'class' => 'yii\log\FileTarget',
-                    'levels' => ['error', 'warning', 'info', 'trace'],
-                    'logVars' => [],
-                    'except' => ['yii\db\*'],
-                ],
-                [
-                    'class' => 'yii\log\FileTarget',
-                    'levels' => ['error', 'warning', 'info', 'trace'],
-                    'logVars' => [],
-                    'categories' => ['yii\db\*'],
-                    'logFile' => '@app/runtime/logs/sql.log',
-                ],
-            ],
-        ],
-        'db' => $db,
+        'cache' => $common['cache'],
+        'log' => $common['log'],
+        'db' => $common['db'],
+        'dbTestDataJapan' => $common['dbTestDataJapan'],
     ],
     'params' => $params,
     /*

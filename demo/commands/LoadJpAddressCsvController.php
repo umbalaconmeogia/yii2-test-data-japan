@@ -1,8 +1,8 @@
 <?php
 namespace app\commands;
 
-use batsg\helpers\CsvWithHeader;
 use app\models\JpAddress;
+use batsg\helpers\CsvWithHeader;
 
 /**
  * This command echoes the first argument that you have entered.
@@ -29,7 +29,7 @@ class LoadJpAddressCsvController extends BaseCsvLoadingController
         $this->jpAddressAttributes = array_keys($jpAddress->attributes);
 
         CsvWithHeader::read($this->csvFile, function($csv) {
-            \Yii::$app->db->transaction(function() use ($csv) {
+            \Yii::$app->dbTestDataJapan->transaction(function() use ($csv) {
                 /** @var $csv CsvWithHeader */
                 $csv->skipRow(); // Ignore the second row (the title row).
 

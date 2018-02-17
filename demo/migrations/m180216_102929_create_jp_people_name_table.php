@@ -7,6 +7,12 @@ use yii\db\Migration;
  */
 class m180216_102929_create_jp_people_name_table extends Migration
 {
+    public function init()
+    {
+        $this->db = 'dbTestDataJapan';
+        parent::init();
+    }
+
     /**
      * @inheritdoc
      */

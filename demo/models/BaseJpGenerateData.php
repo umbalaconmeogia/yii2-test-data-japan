@@ -14,7 +14,7 @@ class BaseJpGenerateData extends BaseModel
      */
     protected static function getAllIds($searchCondition = [])
     {
-        $sourceRecords = static::find()->select(['id'])->where($searchCondition)->limit(100)->all();
+        $sourceRecords = static::find()->select(['id'])->where($searchCondition)->all();
         $sourceIds = static::getArrayOfFieldValue($sourceRecords);
         $sourceRecords = NULL; // Does this help free memory?
         return $sourceIds;
@@ -62,5 +62,9 @@ class BaseJpGenerateData extends BaseModel
         if ($save) {
             $targetModel->save();
         }
+    }
+
+    public static function getDb() {
+        return \Yii::$app->dbTestDataJapan;
     }
 }

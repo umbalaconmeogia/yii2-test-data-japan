@@ -38,6 +38,8 @@ AppAsset::register($this);
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
+            ['label' => 'Company', 'url' => ['/company/index']],
+            ['label' => 'Employee', 'url' => ['/employee/index']],
             ['label' => 'JpAddress', 'url' => ['/jp-address/index']],
             ['label' => 'JpPeopleName', 'url' => ['/jp-people-name/index']],
 //             ['label' => 'Home', 'url' => ['/site/index']],

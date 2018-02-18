@@ -2,6 +2,8 @@
 
 namespace app\models;
 
+use Codeception\Example;
+
 /**
  * This is the model class for table "jp_people_name".
  *
@@ -55,24 +57,65 @@ class JpPeopleName extends BaseJpGenerateData
         ];
     }
 
-    public static function generateNameData($className, $destKanjiField = 'name', $destKanaField = 'name_kana')
+    /**
+     * @param JpPeopleName[] $lastNameList
+     * @param JpPeopleName[] $firstNameList
+     * @return \app\models\JpPeopleName
+     */
+    public static function getRandomFullName(&$lastNameList, &$firstNameList)
     {
-        $lastNameIds = static::getAllIds(['type' => static::TYPE_LASTNAME]);
-        $firstNameIds = static::getAllIds(['type' => static::TYPE_FIRSTNAME]);
+        $lastName = self::getRandomRecord($lastNameList);
+        $firstName = self::getRandomRecord($firstNameList);
+        return new JpPeopleName([
+            'kanji' => "{$lastName->kanji}　{$firstName->kanji}",
+            'kana' => "{$lastName->kana}　{$firstName->kana}",
+        ]);
+    }
+
+    /**
+     * @param string $className
+     * @param array $attrMap Mix between $key => $value and array (sub mapping).
+     *                       Example
+     *                           [
+     *                               'kanji' => 'introducer_name', // Set introducer name
+     *                               [ // Set this people name.
+     *                                   'kanji' => 'name',
+     *                                   'kana' => 'name_kana',
+     *                               ],
+     *                           ]
+     * @param boolean $ignoreEmpty
+     */
+    public static function generateNameData($className, $attrMap, $ignoreEmpty = FALSE)
+    {
+        $lastNameList = static::getAllIdsCached(['type' => static::TYPE_LASTNAME]);
+        $firstNameList = static::getAllIdsCached(['type' => static::TYPE_FIRSTNAME]);
+
+        // Standardize $attrMap
+        $mapIndividuals = [];
+        $mapArr = [];
+        foreach ($attrMap as $key => $value) {
+            if (is_array($value)) {
+                $mapArr[] = $value;
+            } else {
+                $mapIndividuals[$key] = $value;
+            }
+        }
+        $attrMap = array_merge([$mapIndividuals], $mapArr);
 
         // Get all objects to be changed.
         $targetObjects = $className::find()->all();
-
+        $nTargetObjects = count($targetObjects);
         // Update objects data.
-        foreach ($targetObjects as $targetModel) {
-            // Gen random lastname and firstname.
-            $lastName = self::getRandomRecord($lastNameIds);
-            $firstName = self::getRandomRecord($firstNameIds);
-            $targetModel->$destKanjiField = "{$lastName->kanji}　{$firstName->kanji}";
-            if ($destKanaField) {
-                $targetModel->$destKanaField = "{$lastName->kana}　{$firstName->kana}";
+        for ($i = 0; $i < $nTargetObjects; $i++) {
+            $targetModel = $targetObjects[$i];
+            foreach ($attrMap as $map) {
+                // Gen random lastname and firstname.
+                $jpPeopleName = static::getRandomFullName($lastNameList, $firstNameList);
+                $jpPeopleName->changeData($targetModel, $map, $ignoreEmpty);
             }
             $targetModel->save();
+
+            unset($targetObjects[$i]); // Free memory.
         }
     }
 }

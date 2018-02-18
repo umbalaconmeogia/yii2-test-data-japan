@@ -7,17 +7,55 @@ use yii\db\ActiveRecord;
 
 class BaseJpGenerateData extends BaseModel
 {
-    /**
-     * Get IDs of ActiveRecord that match $searchCondition.
-     * @param array $searchCondition Condition used in where().
-     * @return int[]
-     */
-    protected static function getAllIds($searchCondition = [])
+    protected static $jpDataCache = [];
+
+    public static function clearCache($key = NULL)
     {
-        $sourceRecords = static::find()->select(['id'])->where($searchCondition)->all();
-        $sourceIds = static::getArrayOfFieldValue($sourceRecords);
-        $sourceRecords = NULL; // Does this help free memory?
-        return $sourceIds;
+        if ($key && isset(static::$jpDataCache[$key])) {
+            unset(static::$jpDataCache[$key]);
+        } else {
+            static::$jpDataCache = NULL;
+        }
+    }
+
+    /**
+     * Search for models that match $searchCondition.
+     * @param array $searchCondition
+     * @return array Mapping between model id and the models found.
+     */
+    protected static function getAllIdsCached($searchCondition = [])
+    {
+        $cacheKey = static::getCacheKey($searchCondition);
+        echo "Get data for cache $cacheKey\n";
+
+        // Get data from DB if not cached (and cache it).
+        if (!isset(self::$jpDataCache[$cacheKey])) {
+            echo "Generate data for cache $cacheKey\n";
+            $sourceRecords = static::find()->where($searchCondition)->all();
+            self::$jpDataCache[$cacheKey] = static::hashModels($sourceRecords);
+        }
+
+        return self::$jpDataCache[$cacheKey];
+    }
+
+    /**
+     * Generate caching key based on search condition.
+     * @param array $searchCondition
+     * @return string
+     */
+    private static function getCacheKey($searchCondition)
+    {
+        // Generate cache key.
+        $cacheKey = [];
+        $cacheKey[] = 'CACHE_ALL_IDS';
+        $cacheKey[] = static::tableName();
+        if ($searchCondition) {
+            foreach ($searchCondition as $key => $value) {
+                $sourceKey = is_numeric($key) ? $value : $key;
+                $cacheKey[] = "{$sourceKey}=>{$value}";
+            }
+        }
+        return join('$', $cacheKey);
     }
 
     /**
@@ -25,24 +63,35 @@ class BaseJpGenerateData extends BaseModel
      * @param int[] $ids
      * @return ActiveRecord
      */
-    protected static function getRandomRecord(&$ids)
+    protected static function getRandomRecord(&$records)
     {
-        return static::findOne(['id' => $ids[mt_rand(0, count($ids) - 1)]]);
+        $ids = array_keys($records);
+        return $records[$ids[mt_rand(0, count($records) - 1)]];
     }
 
-    public static function generateData($className, $attrMap, $sourceCondition = [])
+    /**
+     * @param string $className
+     * @param string[[] $attrMap
+     * @param array $sourceCondition
+     * @param boolean $ignoreEmpty If TRUE, only set a field if its previous value is not empty.
+     */
+    public static function generateData($className, $attrMap, $sourceCondition = [], $ignoreEmpty = FALSE)
     {
-        $sourceIds = self::getAllIds($sourceCondition);
+        $sourceRecordList = static::getAllIdsCached($sourceCondition);
 
         // Get all objects to be changed.
         $targetObjects = $className::find()->all();
+        $nTargetObjects = count($targetObjects);
 
         // Update objects data.
-        foreach ($targetObjects as $targetModel) {
+        for ($i = 0; $i < $nTargetObjects; $i++) {
+            $targetModel = $targetObjects[$i];
             // Gen a random Source.
-            $sourceRecord = static::getRandomRecord($sourceIds);
+            $sourceRecord = static::getRandomRecord($sourceRecordList);
             // Change specified field value.
-            $sourceRecord->changeData($targetModel, $attrMap);
+            $sourceRecord->changeData($targetModel, $attrMap, $ignoreEmpty);
+
+            unset($targetObjects[$i]); // Free memory
         }
     }
 
@@ -51,17 +100,18 @@ class BaseJpGenerateData extends BaseModel
      * @param string[] $attrMap Array define pair of models' attribute.
      *                    If both attributes are same, then it may be defined as string element,
      *                    else it should be defined as $sourceField => $destField pair.
-     * @param boolean $save Save $targetModel or not.
+     * @param boolean $ignoreEmpty If TRUE, only set a field if its previous value is not empty.
      */
-    public function changeData(ActiveRecord $targetModel, $attrMap, $save = TRUE)
+    public function changeData(ActiveRecord $targetModel, $attrMap, $ignoreEmpty = FALSE)
     {
+        echo "Change data of " . $targetModel->tableName() . "({$targetModel->id})\n";
         foreach ($attrMap as $key => $destField) {
             $sourceField = is_numeric($key) ? $destField : $key;
-            $targetModel->$destField = $this->$sourceField;
+            if ($targetModel->$destField || !$ignoreEmpty) {
+                $targetModel->$destField = $this->$sourceField;
+            }
         }
-        if ($save) {
-            $targetModel->save();
-        }
+        $targetModel->save();
     }
 
     public static function getDb() {

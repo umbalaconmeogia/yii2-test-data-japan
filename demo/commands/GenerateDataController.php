@@ -25,8 +25,9 @@ class GenerateDataController extends Controller
             'townAreaAndFollow' => 'town',
             'office_name' => 'name',
         ], [
-            'office_flag' => "1",
+            'office_flag' => 1,
         ]);
+        JpAddress::clearCache();
     }
 
     /**
@@ -38,7 +39,13 @@ class GenerateDataController extends Controller
         JpAddress::generateData(Employee::className(), [
             'zipcode' => 'postal_code',
             'address',
+        ], [
+            'office_flag' => 1,
         ]);
-        JpPeopleName::generateNameData(Employee::className());
+        JpAddress::clearCache();
+        JpPeopleName::generateNameData(Employee::className(), [
+            'kanji' => 'name',
+            'kana' => 'name_kana',
+        ]);
     }
 }

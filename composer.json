@@ -9,7 +9,7 @@
         }
     ],
     "autoload": {
-        "psr-4": {"testDataJapan\\": "src/"}
+        "psr-4": {"umbalaconmeogia\\testDataJapan\\": "src/"}
     },
 	"keywords": ["yii2", "utility"],
 	"license": "MIT"

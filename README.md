@@ -4,6 +4,10 @@ This library help to generate test data such as zip code, address, office name, 
 
 If you have records in DB, this library helps you to set the zip code, address, people name... to an random value so that you have a rational test data.
 
+## TODO
+
+Make it a module.
+
 ## References
 
 * 住所データ
